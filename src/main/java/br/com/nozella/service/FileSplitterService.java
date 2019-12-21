@@ -33,8 +33,7 @@ class FileSplitterService {
             }
 
         } catch (final IOException e) {
-            throw new SplitTextException(-10, "Error on read file", e);
-//            System.err.format("IOException: %s%n", e);
+            throw new SplitTextException(10, "Error on read file", e);
         }
 
     }
@@ -43,7 +42,7 @@ class FileSplitterService {
         try {
             Files.write(Paths.get(argumentExecution.getActualFilePath()), rowList);
         } catch (final IOException e) {
-            throw new SplitTextException(-20, "Error on write file", e);
+            throw new SplitTextException(20, "Error on write file", e);
         }
 
     }

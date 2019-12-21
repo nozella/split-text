@@ -29,6 +29,9 @@ public class App implements Runnable {
 
     @Override
     public void run() {
-        System.exit(this.splitTextService.execute(this.args));
+        int code = this.splitTextService.execute(this.args);
+        if (code != 0) {
+            System.exit(code);
+        }
     }
 }

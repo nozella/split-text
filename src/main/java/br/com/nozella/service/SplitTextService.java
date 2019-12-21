@@ -9,7 +9,7 @@ public class SplitTextService {
     private final ParameterUtil parameterUtil;
     private final FileSplitterService fileSplitterService;
 
-    public SplitTextService(){
+    public SplitTextService() {
         this.parameterUtil = new ParameterUtil();
         this.fileSplitterService = new FileSplitterService();
     }
@@ -21,9 +21,11 @@ public class SplitTextService {
             this.fileSplitterService.split(argumentExecution);
             return 0;
         } catch (final SplitTextException e) {
+            e.printStackTrace();
             return e.getCode();
         } catch (final Throwable t) {
-            return -1;
+            t.printStackTrace();
+            return 1;
         }
     }
 
