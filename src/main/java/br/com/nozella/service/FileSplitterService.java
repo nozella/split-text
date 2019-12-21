@@ -5,7 +5,6 @@ import br.com.nozella.model.ArgumentExecution;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.List;
 class FileSplitterService {
     void split(final ArgumentExecution argumentExecution) throws SplitTextException {
         final List<String> lineList = new ArrayList<>();
-        try (final BufferedReader bufferedReader = Files.newBufferedReader(argumentExecution.getFilePath(), Charset.defaultCharset())) {
+        try (final BufferedReader bufferedReader = Files.newBufferedReader(argumentExecution.getFilePath())) {
             String line;
             long pageRow = 0L, fileSize = 0L;
             while ((line = bufferedReader.readLine()) != null) {
@@ -25,6 +24,7 @@ class FileSplitterService {
                     pageRow = 0L;
                     fileSize = 0L;
                     this.writeFile(lineList, argumentExecution);
+                    System.out.println(String.format("Arquivo criado: %s", argumentExecution.getActualFilePath()));
                     argumentExecution.increment();
                     lineList.clear();
                 } else if (pageRow >= argumentExecution.pageSize) {
