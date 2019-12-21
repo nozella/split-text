@@ -8,6 +8,10 @@ public class SplitTextException extends Exception {
         this.code = code;
     }
 
+    public SplitTextException(final int code, final String message) {
+        this(code, message, null);
+    }
+
     public int getCode() {
         return code;
     }

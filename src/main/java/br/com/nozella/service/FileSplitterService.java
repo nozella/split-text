@@ -1,37 +1,39 @@
 package br.com.nozella.service;
 
 import br.com.nozella.exception.SplitTextException;
-import br.com.nozella.bo.ArgumentExecution;
+import br.com.nozella.model.ArgumentExecution;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
 class FileSplitterService {
     void split(final ArgumentExecution argumentExecution) throws SplitTextException {
         final List<String> lineList = new ArrayList<>();
-        try (final BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(argumentExecution.getFilePath()))) {
+        try (final BufferedReader bufferedReader = Files.newBufferedReader(argumentExecution.getFilePath(), Charset.defaultCharset())) {
             String line;
-            int pageRow = 0, fileSize = 0;
+            long pageRow = 0L, fileSize = 0L;
             while ((line = bufferedReader.readLine()) != null) {
                 pageRow++;
                 fileSize++;
                 lineList.add(line);
                 if (fileSize >= argumentExecution.getFileSize()) {
-                    pageRow = 0;
-                    fileSize = 0;
-                    this.writeFile(lineList, argumentExecution.increment());
+                    pageRow = 0L;
+                    fileSize = 0L;
+                    this.writeFile(lineList, argumentExecution);
+                    argumentExecution.increment();
                     lineList.clear();
-                } else if (pageRow >= argumentExecution.getPageSize()) {
-                    pageRow = 0;
+                } else if (pageRow >= argumentExecution.pageSize) {
+                    pageRow = 0L;
                     this.writeFile(lineList, argumentExecution);
                     lineList.clear();
                 }
             }
-
+            this.writeFile(lineList, argumentExecution);
         } catch (final IOException e) {
             throw new SplitTextException(10, "Error on read file", e);
         }
@@ -40,10 +42,9 @@ class FileSplitterService {
 
     private void writeFile(final List<String> rowList, final ArgumentExecution argumentExecution) throws SplitTextException {
         try {
-            Files.write(Paths.get(argumentExecution.getActualFilePath()), rowList);
+            Files.write(argumentExecution.getActualFilePath(), rowList, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
         } catch (final IOException e) {
             throw new SplitTextException(20, "Error on write file", e);
         }
-
     }
 }
