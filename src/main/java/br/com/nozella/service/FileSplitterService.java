@@ -23,7 +23,7 @@ class FileSplitterService {
                 if (fileSize >= argumentExecution.getFileSize()) {
                     pageRow = 0L;
                     fileSize = 0L;
-                    this.writeFile(lineList, argumentExecution);
+                    this.writeEndFile(lineList, argumentExecution);
                     System.out.println(String.format("Arquivo criado: %s", argumentExecution.getActualFilePath()));
                     argumentExecution.increment();
                     lineList.clear();
@@ -33,7 +33,7 @@ class FileSplitterService {
                     lineList.clear();
                 }
             }
-            this.writeFile(lineList, argumentExecution);
+            this.writeEndFile(lineList, argumentExecution);
         } catch (final IOException e) {
             throw new SplitTextException(10, "Error on read file", e);
         }
@@ -43,6 +43,16 @@ class FileSplitterService {
     private void writeFile(final List<String> rowList, final ArgumentExecution argumentExecution) throws SplitTextException {
         try {
             Files.write(argumentExecution.getActualFilePath(), rowList, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+        } catch (final IOException e) {
+            throw new SplitTextException(20, "Error on write file", e);
+        }
+    }
+
+    private void writeEndFile(final List<String> rowList, final ArgumentExecution argumentExecution) throws SplitTextException {
+        try {
+            final String last = rowList.remove(rowList.size() - 1);
+            Files.write(argumentExecution.getActualFilePath(), rowList, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+            Files.writeString(argumentExecution.getActualFilePath(), last, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
         } catch (final IOException e) {
             throw new SplitTextException(20, "Error on write file", e);
         }
