@@ -34,6 +34,7 @@ class FileSplitterService {
                 }
             }
             this.writeEndFile(lineList, argumentExecution);
+            System.out.println(String.format("Arquivo criado: %s", argumentExecution.getActualFilePath()));
         } catch (final IOException e) {
             throw new SplitTextException(10, "Error on read file", e);
         }
@@ -52,7 +53,7 @@ class FileSplitterService {
         try {
             final String last = rowList.remove(rowList.size() - 1);
             Files.write(argumentExecution.getActualFilePath(), rowList, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-            Files.writeString(argumentExecution.getActualFilePath(), last, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+            Files.write(argumentExecution.getActualFilePath(), last.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
         } catch (final IOException e) {
             throw new SplitTextException(20, "Error on write file", e);
         }
